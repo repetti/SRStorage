@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <!--<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>-->
+    <script src="jquery-213.js"></script>
+
+</head>
+
+<script language="javascript" type="text/javascript">
+
+  //var wsUri = "ws://echo.websocket.org/";
+  var output;
+
+  function init()
+  {
+    output = document.getElementById("output");
+    testWebSocket();
+  }
+
+  function testWebSocket()
+  {
+    websocket = new WebSocket("ws://" + document.location.host + document.location.pathname + "mars");
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+
+  function onOpen(evt)
+  {
+    writeToScreen("CONNECTED");
+    //doSend("WebSocket rocks");
+    doSend($("#pass").val());
+  }
+
+  function onClose(evt)
+  {
+    writeToScreen("DISCONNECTED");
+  }
+
+  function onMessage(evt)
+  {
+    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+    //websocket.close();
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("SENT: " + message);
+    websocket.send(message);
+  }
+
+  function writeToScreen(message)
+  {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    output.appendChild(pre);
+  }
+
+  window.addEventListener("load", init, false);
+
+$(document).ready(function(){
+  $("#c1").click(function(){
+    testWebSocket();
+  });
+  $("#c2").click(function(){
+    doSend($("#pass").val());
+  });
+  $("#c3").click(function(){
+    websocket.close();
+  });
+});
+
+
+</script>
+
+<body>
+
+<input id="pass" size="35" value="hello world">
+<button id="c1">Connect</button>
+<button id="c2">Send</button>
+<button id="c3">Disconnect</button>
+
+<hr>
+
+<div id="output"></div>
+
+</body>
+</html>

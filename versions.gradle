@@ -1,0 +1,32 @@
+project.ext {
+    versionConfigUtils = "0.5+"
+    versionModel = "1.0.0-b28"
+    versionUtil = "1.12.0"
+
+    versionAnnotations = "13.0"
+    versionJackson = "2.4.2"
+    versionJacksonOld = "1.9.13"
+    versionJersey = "2.13"
+    versionSlf4j = "1.7.7"
+    versionLog4j = "1.2.17"
+    versionMongo = "2.12.3"
+    versionZookeeper = "3.4.6"
+
+    versionServletApi = "3.0.1"
+    versionWebsocketApi = "1.1"
+    versionWebApi = "6.0"
+
+    versionJetty = "9.2.7"
+
+    versionApacheHttp = "4.3"
+    versionNetty = "4.0+"
+    versionJettyAsm = "3.3.1+"
+    versionTomcat = "7+"
+    versionGlassfish = "3.1+"
+    versionGrizzly = "2.3.14"
+    versionAHC = "1.9+" // Async Http Client
+    versionAtmosphere2 = "2.0+"
+    versionTyrus = "1.9+"
+
+    versionTestJunit = "4.11"
+}
