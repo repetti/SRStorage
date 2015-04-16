@@ -1,0 +1,6 @@
+rootProject.name = 'SRStorage'
+
+include 'srs-core'
+
+include 'srs-simple-ui'
+

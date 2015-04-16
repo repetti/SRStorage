@@ -1,0 +1,33 @@
+apply plugin: 'war'
+
+sourceCompatibility = 1.5
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+apply from: 'versions.gradle'
+
+dependencies {
+    compile fileTree (dir: 'lib', include: '*.jar')
+
+    providedCompile group: 'org.apache.tomcat', name: 'tomcat-websocket-api', version: project.versionTomcat
+    providedCompile group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: project.versionTomcat
+
+    compile group: 'org.jetbrains', name: 'annotations', version: project.versionAnnotations
+    compile group: 'org.apache.tomcat', name: 'tomcat7-websocket', version: project.versionTomcat
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versionJackson
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versionJackson
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versionJackson
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: project.versionSlf4j
+
+    testRuntime group: 'org.slf4j', name: 'slf4j-simple', version: project.versionSlf4j
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: project.versionTomcat
+    testCompile group: 'org.apache.tomcat', name: 'tomcat-jasper', version: project.versionTomcat
+    testCompile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: project.versionTomcat
+}
