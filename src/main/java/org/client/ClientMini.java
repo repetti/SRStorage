@@ -22,12 +22,15 @@ import java.util.concurrent.TimeUnit;
 public class ClientMini {
     public static final Object syncObj = new Object();
     private static final Logger log = LoggerFactory.getLogger(ClientMini.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientMini.class);
+
 //    private static final String url = "ws://auth:18080/us-server/wsus";
 //    private static final String url = "ws://auth:18080/tomcat7embedNoWebXml-1/websocket";
 //    private static final String url = "ws://echo.websocket.org/";
 //    private static final String url = "wss://echo.websocket.org/";
 //    private static final String url = "ws://0.0.0.0:8080/native_test/chat";
-private static final String url = "ws://spring:m%40nag3r@auth:18080/us-server/wsus";
+private static final String url = "ws://";
+
 
     public static void main(String[] args) throws Exception {
         List<javax.websocket.Extension> extensions = Constants.INSTALLED_EXTENSIONS;

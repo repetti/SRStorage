@@ -63,4 +63,19 @@ public class ClientEndpointMini extends Endpoint {
         log.debug("onError {} {}", session, throwable);
     }
 
+    public static void send(final Session s, final String msg) {
+        log.info("send {}", msg);
+        es.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    s.getBasicRemote().sendText(msg);
+                } catch (Exception e) {
+                    log.error("sending failed", e);
+                }
+                log.info("sent {}", msg);
+            }
+        });
+    }
+
 }
