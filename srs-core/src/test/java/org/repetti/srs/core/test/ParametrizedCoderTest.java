@@ -2,7 +2,7 @@ package org.repetti.srs.core.test;
 
 import org.junit.Test;
 import org.repetti.srs.core.ParametrizedCoder;
-import org.repetti.srs.core.StringHelper;
+import org.repetti.utils.StringHelper;
 
 import static org.junit.Assert.assertEquals;
 

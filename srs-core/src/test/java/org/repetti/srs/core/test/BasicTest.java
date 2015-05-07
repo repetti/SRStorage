@@ -2,7 +2,7 @@ package org.repetti.srs.core.test;
 
 import org.junit.Test;
 import org.repetti.srs.core.Coder;
-import org.repetti.srs.core.StringHelper;
+import org.repetti.utils.StringHelper;
 
 /**
  * Date: 04/05/15

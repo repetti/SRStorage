@@ -1,9 +1,21 @@
 package org.repetti.srs.ui;
 
+import org.repetti.srs.core.ParametrizedCoder;
+import org.repetti.utils.ExceptionHelper;
+import org.repetti.utils.LoggerHelperSlf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Date: 05/05/15
@@ -11,11 +23,24 @@ import java.awt.event.ActionListener;
  * @author repetti
  */
 public class SimpleMain {
+    private static final Logger log = LoggerFactory.getLogger(SimpleMain.class);
+    private static final int keyLength = 256;
+    private static final int iterationCount = 100;
+    private static final String algorithm = "AES/CTR/PKCS7Padding";
+    private final ParametrizedCoder coder = new ParametrizedCoder();
+
     public static void main(String[] args) {
-        new SimpleFrame();//.setVisible(true);
+        LoggerHelperSlf4j.setDebug();
+        new SimpleMain().start();
+        log.debug("initialized");
     }
 
-    private static class SimpleFrame extends JFrame {
+    private void start() {
+        new SimpleFrame().setVisible(true);
+        log.debug("Window shown");
+    }
+
+    private class SimpleFrame extends JFrame {
         private final JButton buttonChoose;
         private final JButton buttonLoad;
         private final JButton buttonSave;
@@ -97,16 +122,125 @@ public class SimpleMain {
         }
 
         private void load() {
+            File file = new File(fieldPath.getText());
+            if (!file.exists()) {
+                JOptionPane.showMessageDialog(this,
+                        "File not found.",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (!file.isFile()) {
+                JOptionPane.showMessageDialog(this,
+                        "Not a regular file.",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (!file.canRead()) {
+                JOptionPane.showMessageDialog(this,
+                        "Unable to read from file.",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            byte[] res;
+            try {
+                Path path = file.toPath();
+                res = Files.readAllBytes(path);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this,
+                        "Unable to read from File: " + ExceptionHelper.stackTraceToString(e),
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             String pass = getPassword("Load");
             if (pass != null) {
-                //TODO
+                try {
+
+                    byte[] ret = coder.decode(res, pass.toCharArray(), algorithm, keyLength, iterationCount);
+                    String retText = new String(ret);
+//                    System.out.println(retText + " " + new String(textOriginal));
+                    this.text.setText(retText);
+
+                    JOptionPane.showMessageDialog(this,
+                            res.length + " bytes successfully wrote.",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            ExceptionHelper.stackTraceToString(e),
+                            "Exception",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Cannot be emty. Aborting.",
+                        "Invalid password",
+                        JOptionPane.WARNING_MESSAGE);
             }
         }
 
         private void save() {
+            File file = new File(fieldPath.getText());
+            if (file.exists() && !file.canWrite()) {
+                JOptionPane.showMessageDialog(this,
+                        "Unable to write to file.",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             String pass = getPassword("Save");
             if (pass != null) {
-                //TODO
+                try {
+                    String text = this.text.getText();
+
+                    byte[] textOriginal = text.getBytes();
+
+                    byte[] res = coder.encode(textOriginal, pass.toCharArray(), algorithm, keyLength, iterationCount);
+
+                    file.createNewFile();
+                    BufferedOutputStream bos = null;
+                    try {
+                        try {
+                            bos = new BufferedOutputStream(new FileOutputStream(file));
+                            bos.write(res);
+//                            bos.clo
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(this,
+                                    "Unable to write to File: " + ExceptionHelper.stackTraceToString(e),
+                                    "Error",
+                                    JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+                    } finally {
+                        if (bos != null) {
+                            try {
+                                bos.close();
+                            } catch (IOException e) {
+                                log.warn("Exception while closing file {}", file, e);
+                            }
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(this,
+                            res.length + " bytes successfully wrote.",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            ExceptionHelper.stackTraceToString(e),
+                            "Exception",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Cannot be emty. Aborting.",
+                        "Invalid password",
+                        JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -115,7 +249,7 @@ public class SimpleMain {
             JLabel label = new JLabel("Please enter your password:");
             JPasswordField passwordField = new JPasswordField();
             int status = JOptionPane.showConfirmDialog(null,
-                    new Object[]{label, passwordField}, "Password:",
+                    new Object[]{label, passwordField}, title,
                     JOptionPane.OK_CANCEL_OPTION);
 
             if (status == JOptionPane.OK_OPTION) {
