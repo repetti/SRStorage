@@ -100,10 +100,7 @@ public class SimpleMain {
 
             this.pack(); //to get insets of the window
             Insets i = this.getInsets();
-//            Insets pi = pane.getInsets();
-            System.out.println(i);
-//            System.out.println(pi);
-//            this.setSize(w + i.left + i.right + pi.left + pi.right, h + i.top + i.bottom + pi.top + pi.bottom);
+            log.debug("{}", i);
             this.setSize(w + i.left + i.right, h + i.top + i.bottom);
             this.setResizable(false);
 
@@ -166,7 +163,7 @@ public class SimpleMain {
                     this.text.setText(retText);
 
                     JOptionPane.showMessageDialog(this,
-                            res.length + " bytes successfully wrote.",
+                            "Successfully read.",
                             "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e) {
@@ -177,7 +174,7 @@ public class SimpleMain {
                 }
             } else {
                 JOptionPane.showMessageDialog(this,
-                        "Cannot be emty. Aborting.",
+                        "Cannot be empty. Aborting.",
                         "Invalid password",
                         JOptionPane.WARNING_MESSAGE);
             }
@@ -238,7 +235,7 @@ public class SimpleMain {
                 }
             } else {
                 JOptionPane.showMessageDialog(this,
-                        "Cannot be emty. Aborting.",
+                        "Cannot be empty. Aborting.",
                         "Invalid password",
                         JOptionPane.WARNING_MESSAGE);
             }
