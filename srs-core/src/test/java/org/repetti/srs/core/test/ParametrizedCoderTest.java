@@ -27,17 +27,18 @@ public class ParametrizedCoderTest {
         String pass = "pass";
         String algorithm = "AES/CTR/PKCS7Padding";
         int keyLength = 256;
-        int iterationCount = 100;
+        int saltLength = 32;
+        int iterationCount = 1000;
 
         byte[] textOriginal = text.getBytes();
 
         printTime("inited");
-        byte[] res = c.encode(textOriginal, pass.toCharArray(), algorithm, keyLength, iterationCount);
+        byte[] res = c.encode(textOriginal, pass.toCharArray(), algorithm, keyLength, saltLength, iterationCount);
         printTime("encoded");
 
         System.out.println(StringHelper.toHexString(res));
 
-        byte[] ret = c.decode(res, pass.toCharArray(), algorithm, keyLength, iterationCount);
+        byte[] ret = c.decode(res, pass.toCharArray(), algorithm, keyLength);
         printTime("decoded");
         String retText = new String(ret);
         System.out.println(retText + " " + new String(textOriginal));
@@ -53,10 +54,10 @@ public class ParametrizedCoderTest {
         return nanoTime / 1000_000_000 + "." + (nanoTime / 1000_000 % 1000);
     }
 
-    private boolean check(ParametrizedCoder c, String text, String pass, String algorithm, int keyLength, int iterationCount) {
+    private boolean check(ParametrizedCoder c, String text, String pass, String algorithm, int keyLength, int saltLength, int iterationCount) {
         byte[] textOriginal = text.getBytes();
-        byte[] res = c.encode(textOriginal, pass.toCharArray(), algorithm, keyLength, iterationCount);
-        byte[] ret = c.decode(res, pass.toCharArray(), algorithm, keyLength, iterationCount);
+        byte[] res = c.encode(textOriginal, pass.toCharArray(), algorithm, keyLength, saltLength, iterationCount);
+        byte[] ret = c.decode(res, pass.toCharArray(), algorithm, keyLength);
         String retText = new String(ret);
         try {
             assertEquals("texts are not same", text, retText);

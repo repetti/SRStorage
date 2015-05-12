@@ -21,9 +21,23 @@ import java.security.Security;
  * @author repetti
  */
 public class ParametrizedCoder {
+    /**
+     * Salt length n bytes, minimum recommendd is 8 (64bit)
+     */
+    public static final int defaultSaltLength = 32;
+    /**
+     * Iteration count. Minimum recommended is 1000
+     */
+    public static final int defaultIterationCount = 2048;
+    /**
+     * Default cipher algorithm
+     */
+    public static final String defaultAlgorithm = "AES/CTR/PKCS7Padding";
+    /**
+     * Key length. 128/192/256 for AES
+     */
+    public static final int defaultKeyLength = 256;
     private static final Logger log = LoggerFactory.getLogger(ParametrizedCoder.class);
-
-    private static final int defaultSaltLength = 128;
     /**
      * bc/docs/specifications.html
      * <p/>
@@ -55,12 +69,16 @@ public class ParametrizedCoder {
 //        }
     }
 
-    public byte[] encode(byte[] plain, char[] passPhrase, String algorithm, int keyLength, int iterationCount) {
-//        byte[] b = new byte[defaultSaltLength];
-//        ByteBuffer bb = ByteBuffer.wrap(b);
-        byte[] salt = random.generateSeed(defaultSaltLength);
-//        bb.put(salt);
+    public byte[] encode(byte[] plain, char[] passPhrase) {
+        return encode(plain, passPhrase, defaultAlgorithm, defaultKeyLength);
+    }
 
+    public byte[] encode(byte[] plain, char[] passPhrase, String algorithm, int keyLength) {
+        return encode(plain, passPhrase, algorithm, keyLength, defaultSaltLength, defaultIterationCount);
+    }
+
+    public byte[] encode(byte[] plain, char[] passPhrase, String algorithm, int keyLength, int saltLength, int iterationCount) {
+        byte[] salt = random.generateSeed(saltLength);
         byte[] res;
         byte[] iv;
         try {
@@ -75,10 +93,11 @@ public class ParametrizedCoder {
         } catch (Exception e) {
             throw new RuntimeException("Unable to encode", e);
         }
-        byte[] ret = new byte[4 + salt.length + 4 + iv.length + res.length];
+        byte[] ret = new byte[2 + 2 + salt.length + 4 + iv.length + res.length];
         ByteBuffer bb = ByteBuffer.wrap(ret);
         log.info("salt length = " + salt.length);
-        bb.putInt(salt.length);
+        bb.putShort((short) iterationCount);
+        bb.putShort((short) salt.length);
         bb.put(salt);
         log.info("iv length = " + iv.length);
         bb.putInt(iv.length);
@@ -89,9 +108,15 @@ public class ParametrizedCoder {
         return ret;
     }
 
-    public byte[] decode(byte[] coded, char[] passPhrase, String algorithm, int keyLength, int iterationCount) {
+    public byte[] decode(byte[] coded, char[] passPhrase) {
+        return decode(coded, passPhrase, defaultAlgorithm, defaultKeyLength);
+    }
+
+    public byte[] decode(byte[] coded, char[] passPhrase, String algorithm, int keyLength) {
         ByteBuffer bb = ByteBuffer.wrap(coded);
-        final int saltLength = bb.getInt();
+        final int iterationCount = bb.getShort();
+        log.info("iteration count = " + iterationCount);
+        final int saltLength = bb.getShort();
         log.info("salt length = " + saltLength);
         byte[] salt = new byte[saltLength];
         bb.get(salt, 0, saltLength);

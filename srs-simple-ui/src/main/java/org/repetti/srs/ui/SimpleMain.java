@@ -24,13 +24,17 @@ import java.nio.file.Path;
  */
 public class SimpleMain {
     private static final Logger log = LoggerFactory.getLogger(SimpleMain.class);
-    private static final int keyLength = 256;
-    private static final int iterationCount = 100;
-    private static final String algorithm = "AES/CTR/PKCS7Padding";
+
+    static {
+        LoggerHelperSlf4j.setDebug();
+    }
+
+    //    private static final int keyLength = 256;
+//    private static final int iterationCount = 100;
+//    private static final String algorithm = "AES/CTR/PKCS7Padding";
     private final ParametrizedCoder coder = new ParametrizedCoder();
 
     public static void main(String[] args) {
-        LoggerHelperSlf4j.setDebug();
         new SimpleMain().start();
         log.debug("initialized");
     }
@@ -81,7 +85,7 @@ public class SimpleMain {
             final int w = 640;
             final int h = 480;
             final int b = 5;
-            final int bw = 100;
+            final int bw = 120;
             final int eh = 25;
             final int fw = w - b * 5 - bw * 3;
 
@@ -157,7 +161,7 @@ public class SimpleMain {
             if (pass != null) {
                 try {
 
-                    byte[] ret = coder.decode(res, pass.toCharArray(), algorithm, keyLength, iterationCount);
+                    byte[] ret = coder.decode(res, pass.toCharArray());
                     String retText = new String(ret);
 //                    System.out.println(retText + " " + new String(textOriginal));
                     this.text.setText(retText);
@@ -197,9 +201,13 @@ public class SimpleMain {
 
                     byte[] textOriginal = text.getBytes();
 
-                    byte[] res = coder.encode(textOriginal, pass.toCharArray(), algorithm, keyLength, iterationCount);
+                    byte[] res = coder.encode(textOriginal, pass.toCharArray());
 
-                    file.createNewFile();
+                    if (file.createNewFile()) {
+                        log.debug("File created");
+                    } else {
+                        log.debug("File already existed");
+                    }
                     BufferedOutputStream bos = null;
                     try {
                         try {
