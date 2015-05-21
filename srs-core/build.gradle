@@ -4,7 +4,7 @@ sourceCompatibility = 1.5
 version = '1.0'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 apply from: '../versions.gradle'
@@ -14,11 +14,11 @@ dependencies {
 
     compile group: 'org.jetbrains', name: 'annotations', version: project.versionAnnotations
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.versionSlf4j
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: project.versionJackson
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: project.versionJackson
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: project.versionJackson
+//    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: project.versionJackson
+//    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: project.versionJackson
+//    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: project.versionJackson
 
-    compile group: 'org.mongodb', name: 'mongo-java-driver', version: project.versionMongo
+//    compile group: 'org.mongodb', name: 'mongo-java-driver', version: project.versionMongo
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: project.versionBC
 
     testCompile group: 'org.slf4j', name: 'slf4j-simple', version: project.versionSlf4j
